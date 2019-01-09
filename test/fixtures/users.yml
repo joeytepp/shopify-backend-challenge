@@ -1,0 +1,12 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+tobias:
+  first_name: Tobias
+  last_name: Lütke
+  email: tobias@shopify.com
+  password: password
+lee:
+  first_name: Lee
+  last_name: Byron
+  email: lee@graphql.org
+  password: password
