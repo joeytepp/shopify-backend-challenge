@@ -20,5 +20,5 @@ To try out the shop for yourself, run the following commands.
 
 > This will start the server
 
-Once the server is running, visit `http://localhost:3000/graphiql`, where [GraphiQL IDE](https://github.com/graphql/graphiql)
+Once the server is running, visit `http://localhost:3000/graphiql`, where [GraphQL Playground](https://github.com/prisma/graphql-playground)
 is mounted.

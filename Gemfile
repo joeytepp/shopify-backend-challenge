@@ -5,7 +5,7 @@ ruby '2.5.1'
 
 # GraphQL related gems
 gem 'graphql'
-gem 'graphiql-rails'
+gem 'graphql_playground-rails'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.1'
 # Use postgresql as the database for Active Record
