@@ -1,5 +1,5 @@
 module Types
   class UserAuthenticatePayloadType < Types::BaseObject
-    field :user, UserType, null: true, description: "The user that has been authenticated."
+    field :access_token, String, null: true, description: "The access token for the authenticated user."
   end
 end

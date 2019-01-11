@@ -56,18 +56,20 @@ module Types
 
       user.save!
 
-      $CURRENT_USER = user
-
       { user: user }
     end
 
     def user_authenticate(args)
       user = User.find_by(email: args[:input].email)
+
+      unless user then raise "Could not find user with email #{args[:input].email}" end
+
       auth_success = user.authenticate(args[:input].password)
 
       if auth_success
-        $CURRENT_USER = user
-        { user: user }
+        payload = { current_user: user.id }
+        access_token = JWT.encode payload, ENV["AUTH_SECRET"] || "ABC123", 'HS256'
+        { access_token: access_token }
       else
         raise "Incorrect password provided!"
       end
@@ -78,7 +80,7 @@ module Types
 
       input = args[:input]
 
-      store = Store.new(name: input.name, owner_id: $CURRENT_USER.id)
+      store = Store.new(name: input.name, owner_id: context[:current_user])
       store.save!
 
       { store: store }
@@ -204,7 +206,7 @@ module Types
         raise "Cannot purchase #{input.quantity} #{product.title}s at this time."
       end
 
-      purchase = Purchase.create(user_id: $CURRENT_USER.id, product_id: product.id, quantity: input.quantity)
+      purchase = Purchase.create(user_id: context[:current_user], product_id: product.id, quantity: input.quantity)
 
       purchase.save!
       product.save!
@@ -235,13 +237,16 @@ module Types
     private
 
     def is_authenticated
-      unless $CURRENT_USER
+      current_user = context[:current_user]
+
+      unless current_user
         raise "Must be authenticated to perform this action!"
       end
     end
 
     def is_owner(id)
-      unless id == $CURRENT_USER.id
+      current_user = context[:current_user]
+      unless id == current_user
         raise "Must be the owner of this resource to perform this operation!"
       end
     end

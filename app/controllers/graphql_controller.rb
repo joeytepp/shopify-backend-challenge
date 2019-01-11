@@ -3,9 +3,8 @@ class GraphqlController < ApplicationController
     variables = ensure_hash(params[:variables])
     query = params[:query]
     operation_name = params[:operationName]
-    context = {
-      current_user: nil
-    }
+    context = create_context
+
     result = ShopifyBackendChallengeSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
     render json: result
   rescue => e
@@ -38,5 +37,22 @@ class GraphqlController < ApplicationController
     logger.error e.backtrace.join("\n")
 
     render json: { error: { message: e.message, backtrace: e.backtrace }, data: {} }, status: 500
+  end
+
+  def create_context
+    authorization = request.headers["Authorization"]
+
+    unless authorization then return { current_user: nil } end
+    auth_split = authorization.split(' ')
+
+    if auth_split[0] != "Bearer"
+      raise "Invalid token provided!"
+    end
+
+    token = auth_split[1]
+    decoded_token = JWT.decode token, ENV["AUTH_SECRET"] || 'ABC123', true, { algorithm: 'HS256' }
+    current_user = decoded_token[0]["current_user"]
+
+    { current_user: current_user }
   end
 end
