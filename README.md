@@ -1,24 +1,24 @@
-# README
+# Shopify Backend Challenge
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+The annual [Shopify Developer Internship Challenge](https://docs.google.com/document/d/1J49NAOIoWYOumaoQCKopPfudWI_jsQWVKlXmw1f1r-4/edit) for applicants. This year's challenge is to create a basic online store. This respository is my solution, using [Ruby on Rails](https://rubyonrails.org/) and [GraphQL](https://graphql.org).
 
-Things you may want to cover:
+# Requirements
 
-* Ruby version
+- Ruby (>=2.5.1)
+- Rails (>= 5.2.2)
+- PostgreSQL 11
 
-* System dependencies
+# Usage
 
-* Configuration
+To try out the shop for yourself, run the following commands.
 
-* Database creation
+`make bootstrap`
 
-* Database initialization
+> This will install all dependencies and create the local database
 
-* How to run the test suite
+`rails s`
 
-* Services (job queues, cache servers, search engines, etc.)
+> This will start the server
 
-* Deployment instructions
-
-* ...
+Once the server is running, visit `http://localhost:3000/graphiql`, where [GraphiQL IDE](https://github.com/graphql/graphiql)
+is mounted.

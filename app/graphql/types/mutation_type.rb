@@ -1,11 +1,11 @@
 module Types
   class MutationType < Types::BaseObject
     field :user_create, UserCreatePayloadType, null: false, description: "Creates a new user." do
-      argument :input, UserInputType, required: true, description: "The payload of the userCreate mutation."
+      argument :input, UserInputType, required: true, description: "The user that will be created."
     end
 
     field :user_authenticate, UserAuthenticatePayloadType, null: false, description: "Authenticates a user." do
-      argument :input, UserAuthenticateInputType, required: true, description: "The payload of the userAuthenticate mutation"
+      argument :input, UserAuthenticateInputType, required: true, description: "The user that will be authenticated."
     end
 
     field :store_create, StoreCreatePayloadType, null: false, description: "Creates a new store." do
