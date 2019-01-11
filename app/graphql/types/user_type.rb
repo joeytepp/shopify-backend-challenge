@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Types
   class UserType < Types::BaseObject
     field :id, Integer, null: false, description: "The identifier of the user."
@@ -5,7 +7,7 @@ module Types
     field :last_name, String, null: false, description: "The last name of the user."
     field :email, String, null: false, description: "The email of the user."
 
-    field :stores, [StoreType], null: false, description: "The stores owned by the user.", 
+    field :stores, [StoreType], null: false, description: "The stores owned by the user.",
       resolve: ->(obj, _, _) {
         Store.where(owner_id: obj.id)
       }

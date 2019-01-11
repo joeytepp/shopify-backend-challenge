@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Types
   class PurchaseType < Types::BaseObject
     field :id, Integer, null: false, description: "The identifier of the purchase."

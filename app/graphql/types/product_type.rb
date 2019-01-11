@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Types
   class ProductType < Types::BaseObject
     field :id, Integer, null: false, description: "The identifier of the product."

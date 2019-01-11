@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Types
   class MutationType < Types::BaseObject
     field :user_create, UserCreatePayloadType, null: false, description: "Creates a new user." do
@@ -68,7 +70,7 @@ module Types
 
       if auth_success
         payload = { current_user: user.id }
-        access_token = JWT.encode payload, ENV["AUTH_SECRET"] || "ABC123", 'HS256'
+        access_token = JWT.encode payload, ENV["AUTH_SECRET"] || "ABC123", "HS256"
         { access_token: access_token }
       else
         raise "Incorrect password provided!"
@@ -76,7 +78,7 @@ module Types
     end
 
     def store_create(args)
-     is_authenticated
+      is_authenticated
 
       input = args[:input]
 
@@ -100,7 +102,7 @@ module Types
 
       is_owner(store.owner_id)
 
-      updated_store = Store.update(store_id, { :name => input.name })
+      updated_store = Store.update(store_id, name: input.name)
 
       { store: updated_store }
     end
@@ -120,7 +122,7 @@ module Types
     end
 
     def product_create(args)
-     is_authenticated
+      is_authenticated
 
       input = args[:input]
       store_id = args[:store_id]
@@ -163,11 +165,9 @@ module Types
 
       product = Product.update(
         product_id,
-        {
-          :title => input.title,
-          :inventory_count => input.inventory_count,
-          :price => input.price
-        }
+          title: input.title,
+          inventory_count: input.inventory_count,
+          price: input.price
       )
 
       { product: product }
@@ -190,7 +190,7 @@ module Types
     end
 
     def purchase_create(args)
-     is_authenticated
+      is_authenticated
 
       input = args[:input]
 
@@ -236,19 +236,19 @@ module Types
 
     private
 
-    def is_authenticated
-      current_user = context[:current_user]
+      def is_authenticated
+        current_user = context[:current_user]
 
-      unless current_user
-        raise "Must be authenticated to perform this action!"
+        unless current_user
+          raise "Must be authenticated to perform this action!"
+        end
       end
-    end
 
-    def is_owner(id)
-      current_user = context[:current_user]
-      unless id == current_user
-        raise "Must be the owner of this resource to perform this operation!"
+      def is_owner(id)
+        current_user = context[:current_user]
+        unless id == current_user
+          raise "Must be the owner of this resource to perform this operation!"
+        end
       end
-    end
   end
 end

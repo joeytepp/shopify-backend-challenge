@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Types
   class UserInputType < Types::BaseInputObject
     argument :first_name, String, required: true, description: "The first name of the new user."
