@@ -5,16 +5,22 @@ module Types
 
     field :user, UserType, null: true,
       description: "Returns a user resource by identifier." do
-        argument :id, Integer, required: true, description: "The identifier of the user"
+        argument :id, Integer, required: true, description: "The identifier of the user."
       end
 
     field :users, [UserType], null: false, description: "Returns all user resources."
 
     field :store, StoreType, null: true, description: "Returns a store resource by identifier." do
-      argument :id, Integer, required: true, description: "The identifier of the store"
+      argument :id, Integer, required: true, description: "The identifier of the store."
     end
 
     field :stores, [StoreType], null: false, description: "Returns all the store resources."
+
+    field :product, ProductType, null: true, description: "Returns a product resource by identifier." do
+      argument :id, Integer, required: true, description: "The identifier of the store."
+    end
+
+    field :products, [ProductType], null: false, description: "Returns all product resources."
 
     def user(args)
       User.find_by(id: args[:id])
@@ -30,6 +36,14 @@ module Types
 
     def stores
       Store.all
+    end
+
+    def product
+      Product.find_by(id: args[:id])
+    end
+
+    def products
+      Product.all
     end
   end
 end

@@ -1,5 +1,5 @@
 module Types
-  class UserCreateInputType < Types::BaseInputObject
+  class UserInputType < Types::BaseInputObject
     argument :first_name, String, required: true, description: "The first name of the new user."
     argument :last_name, String, required: true, description: "The last name of the new user."
     argument :email, String, required: true, description: "The email of the new user."
