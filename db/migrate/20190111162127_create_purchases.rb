@@ -4,7 +4,7 @@ class CreatePurchases < ActiveRecord::Migration[5.2]
       t.string :quantity
 
       t.belongs_to :product
-      t.belongs_to :purchase
+      t.belongs_to :user
 
       t.timestamps
     end

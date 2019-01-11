@@ -9,5 +9,10 @@ module Types
       resolve: ->(obj, _, _) {
         Store.where(owner_id: obj.id)
       }
+
+    field :purchases, [PurchaseType], null: false, description: "The user's purchases.",
+      resolve: ->(obj, _, _) {
+        Purchase.where(user_id: obj.id)
+      }
   end
 end

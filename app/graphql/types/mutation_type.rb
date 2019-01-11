@@ -27,6 +27,10 @@ module Types
       argument :input, ProductInputType, required: true, description: "The product that will be updated."
     end
 
+    field :purchase_create, PurchaseCreatePayloadType, null: false, description: "Creates a new purchase." do
+      argument :input, PurchaseInputType, required: true, description: "The purchase that will be created."
+    end
+
     def user_create(args)
       input = args[:input]
 
@@ -153,6 +157,33 @@ module Types
       )
 
       { product: product }
+    end
+
+    def purchase_create(args)
+      unless $CURRENT_USER
+        raise "Must be authenticated to perform this action!"
+      end
+
+      input = args[:input]
+
+      product = Product.find_by(id: input.product_id)
+
+      unless product
+        raise "Could not find the product with identifier #{input.product_id}"
+      end
+
+      product.inventory_count -= input.quantity
+
+      unless product.inventory_count > -1
+        raise "Cannot purchase #{input.quantity} #{product.title}s at this time."
+      end
+
+      purchase = Purchase.create(user_id: $CURRENT_USER.id, product_id: product.id, quantity: input.quantity)
+
+      purchase.save!
+      product.save!
+
+      { purchase: purchase }
     end
   end
 end

@@ -28,11 +28,11 @@ ActiveRecord::Schema.define(version: 2019_01_11_162127) do
   create_table "purchases", force: :cascade do |t|
     t.string "quantity"
     t.bigint "product_id"
-    t.bigint "purchase_id"
+    t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["product_id"], name: "index_purchases_on_product_id"
-    t.index ["purchase_id"], name: "index_purchases_on_purchase_id"
+    t.index ["user_id"], name: "index_purchases_on_user_id"
   end
 
   create_table "stores", force: :cascade do |t|
