@@ -14,7 +14,11 @@ module Types
 
     field :store_update, StoreUpdatePayloadType, null: false, description: "Updates an existing store." do
       argument :store_id, Integer, required: true, description: "The identifier of the store."
-      argument :input, StoreInputType, required: true, description: "The updated store"
+      argument :input, StoreInputType, required: true, description: "The updated store."
+    end
+
+    field :store_delete, StoreDeletePayloadType, null: false, description: "Deletes a store." do
+      argument :id, Integer, required: true, description: "The identifier of the store."
     end
 
     field :product_create, ProductCreatePayloadType, null: false, description: "Creates a new product." do
@@ -27,8 +31,16 @@ module Types
       argument :input, ProductInputType, required: true, description: "The product that will be updated."
     end
 
+    field :product_delete, ProductDeletePayloadType, null: false, description: "Deletes a product." do
+      argument :id, Integer, required: true, description: "The identifier of the product."
+    end
+
     field :purchase_create, PurchaseCreatePayloadType, null: false, description: "Creates a new purchase." do
       argument :input, PurchaseInputType, required: true, description: "The purchase that will be created."
+    end
+
+    field :purchase_delete, PurchaseDeletePayloadType, null: false, description: "Deletes a product." do
+      argument :id, Integer, required: true, description: "The identifier of the product."
     end
 
     def user_create(args)
@@ -62,9 +74,7 @@ module Types
     end
 
     def store_create(args)
-      unless $CURRENT_USER
-        raise "Must be authenticated to perform this action!"
-      end
+     is_authenticated
 
       input = args[:input]
 
@@ -75,9 +85,7 @@ module Types
     end
 
     def store_update(args)
-      unless $CURRENT_USER
-        raise "Must be authenticated to perform this action!"
-      end
+      is_authenticated
 
       input = args[:input]
       store_id = args[:store_id]
@@ -88,19 +96,29 @@ module Types
         raise "Unable to find store with identifier #{store_id}"
       end
 
-      unless store.owner_id == $CURRENT_USER.id
-        raise "Must be owner of store to update!"
-      end
+      is_owner(store.owner_id)
 
       updated_store = Store.update(store_id, { :name => input.name })
 
       { store: updated_store }
     end
 
+    def store_delete(args)
+      is_authenticated
+
+      store = Store.find_by(id: args[:id])
+
+      unless store then raise "Unable to find the store with the identifier #{args[:id]}" end
+
+      is_owner(store.owner_id)
+
+      store.destroy!
+
+      { deleted_store_id: store.id }
+    end
+
     def product_create(args)
-      unless $CURRENT_USER
-        raise "Must be authenticated to perform this action!"
-      end
+     is_authenticated
 
       input = args[:input]
       store_id = args[:store_id]
@@ -111,9 +129,7 @@ module Types
         raise "Unable to find store with identifier #{store_id}"
       end
 
-      unless store.owner_id == $CURRENT_USER.id
-        raise "Must be the owner of the store to add products!"
-      end
+      is_owner(store.owner_id)
 
       product = Product.new(
         title: input.title,
@@ -128,9 +144,7 @@ module Types
     end
 
     def product_update(args)
-      unless $CURRENT_USER
-        raise "Must be authenticated to perform this action!"
-      end
+      is_authenticated
 
       input = args[:input]
       product_id = args[:product_id]
@@ -143,9 +157,7 @@ module Types
 
       store = Store.find_by(id: product.store_id)
 
-      unless store.owner_id == $CURRENT_USER.id
-        raise "Must be the owner of the store to update products!"
-      end
+      is_owner(store.owner_id)
 
       product = Product.update(
         product_id,
@@ -159,10 +171,24 @@ module Types
       { product: product }
     end
 
+    def product_delete(args)
+      is_authenticated
+
+      product = Product.find_by(id: args[:id])
+
+      unless product then raise "Unable to find the product with identifier #{args[:id]}" end
+
+      store = Store.find_by(id: product.store_id)
+
+      is_owner(store.owner_id)
+
+      product.destroy!
+
+      { deleted_product_id: product.id }
+    end
+
     def purchase_create(args)
-      unless $CURRENT_USER
-        raise "Must be authenticated to perform this action!"
-      end
+     is_authenticated
 
       input = args[:input]
 
@@ -184,6 +210,40 @@ module Types
       product.save!
 
       { purchase: purchase }
+    end
+
+    def purchase_delete(args)
+      is_authenticated
+
+      purchase = Purchase.find_by(id: args[:id])
+
+      unless purchase
+        raise "Unable to find purchase with identifier #{args[:id]}"
+      end
+
+      is_owner(purchase.user_id)
+
+      product = Product.find_by(id: purchase.product_id)
+      product.inventory_count = product.inventory_count + purchase.quantity.to_i
+
+      purchase.destroy!
+      product.save!
+
+      { deleted_purchase_id: purchase.id }
+    end
+
+    private
+
+    def is_authenticated
+      unless $CURRENT_USER
+        raise "Must be authenticated to perform this action!"
+      end
+    end
+
+    def is_owner(id)
+      unless id == $CURRENT_USER.id
+        raise "Must be the owner of this resource to perform this operation!"
+      end
     end
   end
 end
