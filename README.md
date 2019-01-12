@@ -12,7 +12,7 @@ The annual [Shopify Developer Internship Challenge](https://docs.google.com/docu
 
 To try out the shop for yourself, run the following commands.
 
-`make bootstrap`
+`rake bootstrap`
 
 > This will install all dependencies and create the local database
 
