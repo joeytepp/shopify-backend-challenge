@@ -28,4 +28,4 @@ query {
 }
 ```
 
-will return all `bar` resources in the database (or an empty array if none exist)
+will return all shop resources in the database (or an empty array if none exist)

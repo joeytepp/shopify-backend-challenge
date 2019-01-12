@@ -1,6 +1,6 @@
 # Authentication
 
-For this server, I used [JSON Web Token (JWT)](https://jwt.io/introduction/) authentication to authenticate users. After running the commands in the [README](./README.md) to set up the environment and start the server. You can authenticate as follows:
+For this server, I used [JSON Web Token (JWT)](https://jwt.io/introduction/) authentication to authenticate users. After running the commands in the [README](../README.md) to set up the environment and start the server. You can authenticate as follows:
 
 ## Authenticating An Existing User
 

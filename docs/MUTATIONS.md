@@ -1,6 +1,6 @@
 # Mutations
 
-As mentioned in the [README](./README.md), this server uses [GraphQL](https://graphql.org) to share information with clients. As is standard with GraphQL, write operations are performed using `mutations`. If you are new to GraphQL I recommend checking out [this guide](https://graphql.org/learn/queries/) to learn more.
+As mentioned in the [README](../README.md), this server uses [GraphQL](https://graphql.org) to share information with clients. As is standard with GraphQL, write operations are performed using `mutations`. If you are new to GraphQL I recommend checking out [this guide](https://graphql.org/learn/queries/) to learn more.
 
 > NOTE: For all mutations (except for `userCreate` and `userAuthenticate`) you will need to be [authenticated](./AUTHENTICATION.md) first!
 

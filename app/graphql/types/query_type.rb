@@ -24,6 +24,8 @@ module Types
 
     field :products, [ProductType], null: false, description: "Returns all product resources."
 
+    field :products_available, [ProductType], null: false, description: "Returns all products currently available for purchase (inventory > 0)."
+
     def user(args)
       User.find_by(id: args[:id])
     end
@@ -46,6 +48,10 @@ module Types
 
     def products
       Product.all
+    end
+
+    def products_available
+      Product.where("inventory_count > 0")
     end
   end
 end

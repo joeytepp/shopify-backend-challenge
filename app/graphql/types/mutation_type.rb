@@ -194,6 +194,10 @@ module Types
 
       input = args[:input]
 
+      if input.quantity < 1
+        raise "Quantity must be 1 or greater!"
+      end
+
       product = Product.find_by(id: input.product_id)
 
       unless product
