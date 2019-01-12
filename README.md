@@ -21,3 +21,13 @@ To try out the shop for yourself, run the following commands.
 > This will start the server
 
 Once the server is running, visit `http://localhost:3000/playground`, where [GraphQL Playground](https://github.com/prisma/graphql-playground) is mounted.
+
+# Guides
+
+For a more comprehensive walkthrough, check out guides on the following:
+
+[Authentication](./docs/AUTHENTICATION.md)
+
+[Queries](./docs/QUERIES.md)
+
+[Mutations](./docs/MUTATIONS.md)
