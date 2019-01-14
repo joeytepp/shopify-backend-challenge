@@ -10,9 +10,9 @@ store.save!
 
 # seed products
 products = Product.create([
-    { title: "Snowboard 1", inventory_count: 10, store_id: store.id },
-    { title: "Snowboard 2", inventory_count: 20, store_id: store.id },
-    { title: "Snowboard 3", inventory_count: 30, store_id: store.id }])
+    { title: "Snowboard 1", inventory_count: 10, store_id: store.id, price: 5 },
+    { title: "Snowboard 2", inventory_count: 20, store_id: store.id, price: 5 },
+    { title: "Snowboard 3", inventory_count: 30, store_id: store.id, price: 5 }])
 
 products.each do |product|
   product.save!
