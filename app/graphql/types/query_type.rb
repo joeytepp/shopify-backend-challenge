@@ -2,9 +2,6 @@
 
 module Types
   class QueryType < Types::BaseObject
-    # Add root-level fields here.
-    # They will be entry points for queries on your schema.
-
     field :user, UserType, null: true,
       description: "Returns a user resource by identifier." do
         argument :id, Integer, required: true, description: "The identifier of the user."
@@ -22,9 +19,9 @@ module Types
       argument :id, Integer, required: true, description: "The identifier of the store."
     end
 
-    field :products, [ProductType], null: false, description: "Returns all product resources."
-
-    field :products_available, [ProductType], null: false, description: "Returns all products currently available for purchase (inventory > 0)."
+    field :products, [ProductType], null: false, description: "Returns all product resources." do
+      argument :available, Boolean, required: false, description: "Restricts the response to products that are available for purchase."
+    end
 
     def user(args)
       User.find_by(id: args[:id])
@@ -42,16 +39,16 @@ module Types
       Store.all
     end
 
-    def product
+    def product(args)
       Product.find_by(id: args[:id])
     end
 
-    def products
-      Product.all
-    end
+    def products(args = {})
+      if args[:available]
+        return Product.where("inventory_count > 0")
+      end
 
-    def products_available
-      Product.where("inventory_count > 0")
+      Product.all
     end
   end
 end

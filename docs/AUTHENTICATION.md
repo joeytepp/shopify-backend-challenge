@@ -7,10 +7,10 @@ For this server, I used [JSON Web Token (JWT)](https://jwt.io/introduction/) aut
 The development database willl be seeded with some data, including one user resource. You can authenticate with this using the `userAuthenticate` mutation:
 
 ```graphql
-# Sign in as tobias@shopify.com
+# Sign in as tobi@shopify.com
 mutation {
   userAuthenticate(
-    input: { email: "tobias@shopify.com", password: "password" }
+    input: { email: "tobi@shopify.com", password: "password" }
   ) {
     accessToken
   }
