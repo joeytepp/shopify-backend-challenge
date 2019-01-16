@@ -69,7 +69,7 @@ module Types
       auth_success = user.authenticate(args[:input].password)
 
       if auth_success
-        payload = { current_user: user.id }
+        payload = { current_user: user.id, exp: Time.now.to_i + 3600 }
         access_token = JWT.encode payload, ENV["AUTH_SECRET"] || "ABC123", "HS256"
         { access_token: access_token }
       else
