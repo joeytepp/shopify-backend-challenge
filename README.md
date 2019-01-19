@@ -4,8 +4,8 @@ The annual [Shopify Developer Internship Challenge](https://docs.google.com/docu
 
 # Requirements
 
-- Ruby (>=2.5.1)
-- Rails (>= 5.2.2)
+- Ruby (2.5.1)
+- Rails (5.2.2)
 - PostgreSQL 11
 
 # Usage
