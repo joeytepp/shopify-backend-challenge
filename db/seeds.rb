@@ -21,3 +21,11 @@ end
 # seed purchases
 purchase = Purchase.new(product_id: products[0].id, user_id: user.id)
 purchase.save!
+
+# seed carts
+cart = Cart.new(user_id: user.id, checked_out: false)
+cart.save!
+
+# seed cart_products
+cart_product = CartProduct.new(cart_id: cart.id, product_id: products[1].id)
+cart_product.save!
