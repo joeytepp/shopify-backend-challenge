@@ -8,5 +8,13 @@ module Types
       resolve: ->(obj, _, _) { obj.products }
     field :owner, UserType, null: false, description: "The owner of the cart.",
       resolve: ->(obj, _, _) { User.find_by(id: obj.user_id) }
+    field :total_amount, Float, null: false, description: "The total value of the products in the cart (in dollars)",
+      resolve: ->(obj, _, _) {
+        total = 0
+        obj.products.each do |product|
+          total += product.price
+        end
+        total
+      }
   end
 end

@@ -37,11 +37,7 @@ module Types
       argument :id, Integer, required: true, description: "The identifier of the product."
     end
 
-    field :purchase_create, PurchaseCreatePayloadType, null: false, description: "Creates a new purchase." do
-      argument :input, PurchaseInputType, required: true, description: "The purchase that will be created."
-    end
-
-    field :purchase_delete, PurchaseDeletePayloadType, null: false, description: "Deletes a product." do
+    field :purchase_delete, PurchaseDeletePayloadType, null: false, description: "Deletes a purchase (ie. a refund)." do
       argument :id, Integer, required: true, description: "The identifier of the product."
     end
 
@@ -207,35 +203,6 @@ module Types
       { deleted_product_id: product.id }
     end
 
-    def purchase_create(args)
-      is_authenticated
-
-      input = args[:input]
-
-      if input.quantity < 1
-        raise "Quantity must be 1 or greater!"
-      end
-
-      product = Product.find_by(id: input.product_id)
-
-      unless product
-        raise "Could not find the product with identifier #{input.product_id}"
-      end
-
-      product.inventory_count -= input.quantity
-
-      unless product.inventory_count > -1
-        raise "Cannot purchase #{input.quantity} #{product.title}s at this time."
-      end
-
-      purchase = Purchase.create(user_id: context[:current_user], product_id: product.id, quantity: input.quantity)
-
-      purchase.save!
-      product.save!
-
-      { purchase: purchase }
-    end
-
     def purchase_delete(args)
       is_authenticated
 
@@ -301,7 +268,21 @@ module Types
       end
 
       Product.transaction do
-        products.each(&:save!)
+        purchases_map = {}
+
+        products.each do |product|
+          product.save!
+          if purchases_map[product.id].nil?
+            purchases_map[product.id] = 1
+          else
+            purchases_map[product.id] += 1
+          end
+        end
+
+        purchases_map.each do |product_id, quantity|
+          Purchase.new(product_id: product_id, user_id: context[:current_user], quantity: quantity).save!
+        end
+
         cart.checked_out = true
         cart.save!
       rescue

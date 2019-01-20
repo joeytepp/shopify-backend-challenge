@@ -19,7 +19,7 @@ products.each do |product|
 end
 
 # seed purchases
-purchase = Purchase.new(product_id: products[0].id, user_id: user.id)
+purchase = Purchase.new(product_id: products[0].id, user_id: user.id, quantity: 1)
 purchase.save!
 
 # seed carts
