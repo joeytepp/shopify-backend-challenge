@@ -45,6 +45,24 @@ module Types
       argument :id, Integer, required: true, description: "The identifier of the product."
     end
 
+    field :cart_create, CartCreatePayloadType, null: false, description: "Creates a cart."
+
+    field :cart_delete, CartDeletePayloadType, null: false, description: "Deletes a cart." do
+      argument :id, Integer, required: true, description: "The identifier of the cart."
+    end
+
+    field :cart_check_out, CartCheckOutPayloadType, null: false, description: "Checks out a cart." do
+      argument :id, Integer, required: true, description: "The identifier of the cart."
+    end
+
+    field :product_add_to_cart, ProductAddToCartPayloadType, null: false, description: "Adds a product to a cart." do
+      argument :input, ProductCartInputType, required: true, description: "The input for adding a product to a cart."
+    end
+
+    field :product_remove_from_cart, ProductRemoveFromCartPayloadType, null: false, description: "Removes a product from a cart." do
+      argument :input, ProductCartInputType, required: true, description: "The input for removing a prdocut from a cart."
+    end
+
     def user_create(args)
       input = args[:input]
 
@@ -237,6 +255,107 @@ module Types
 
       { deleted_purchase_id: purchase.id }
     end
+
+    def cart_create
+      is_authenticated
+
+      cart = Cart.new(user_id: context[:current_user], checked_out: false)
+      cart.save!
+
+      { cart: cart }
+    end
+
+    def cart_delete(args)
+      is_authenticated
+
+      cart = Cart.find_by(id: args[:id])
+
+      raise "Unable to find the cart with identifier #{args[:id]}" unless cart
+
+      is_owner(cart.user_id)
+
+      cart.destroy!
+
+      { deleted_cart_id: cart.id }
+    end
+
+    def cart_check_out(args)
+      is_authenticated
+
+      cart = Cart.find_by(id: args[:id])
+
+      raise "Unable to find the cart with identifier #{args[:id]}!" unless cart
+
+      if cart.checked_out
+        raise "The cart with identifier #{args[:id]} has already been checked out!"
+      end
+      is_owner(cart.user_id)
+
+      products = cart.products
+
+      products.each do |product|
+        product.inventory_count -= 1
+        if product.inventory_count < 0
+          raise "#{product.title} can't be purchased at this time, please remove it from your cart."
+        end
+      end
+
+      Product.transaction do
+        products.each(&:save!)
+        cart.checked_out = true
+        cart.save!
+      rescue
+        raise "Unable to check out cart at this time."
+      end
+
+      { checked_out_cart_id: cart.id }
+    end
+
+    def product_add_to_cart(args)
+      is_authenticated
+
+      input = args[:input]
+      cart = Cart.find_by(id: input.cart_id)
+
+      raise "Unable to find the cart with identifier #{input.cart_id}!" unless cart
+
+      is_owner cart.user_id
+
+      product = Product.find_by(id: input.product_id)
+
+      raise "Unable to find the product with identifier #{input.product_id}" unless product
+
+      cart_product = CartProduct.create(input.to_h)
+      cart_product.save!
+
+      { product: product }
+    end
+
+    def product_remove_from_cart(args)
+      is_authenticated
+
+      input = args[:input]
+      cart = Cart.find_by(id: input.cart_id)
+
+      raise "Unable to find the cart with identifier #{input.cart_id}." unless cart
+
+      raise "The cart with identifier #{input.cart_id} has already been checked out" if cart.checked_out
+
+      is_owner(cart.user_id)
+
+      product = Product.find_by(id: input.product_id)
+
+      raise "Unable to find the the product with identifier #{input.product_id}." unless product
+
+      cart_product = CartProduct.find_by(cart_id: input.cart_id, product_id: input.product_id)
+
+      raise "The product with identifier #{input.product_id} is not present in the cart with identifier #{input.cart_id}." unless cart_product
+
+      cart_product.destroy!
+
+      { product: product }
+    end
+
 
     private
 

@@ -16,5 +16,10 @@ module Types
       resolve: ->(obj, _, _) {
         Purchase.where(user_id: obj.id)
       }
+
+    field :carts, [CartType], null: false, description: "The user's carts",
+      resolve: ->(obj, _, _) {
+        Cart.where(user_id: obj.id)
+      }
   end
 end

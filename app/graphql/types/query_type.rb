@@ -23,6 +23,12 @@ module Types
       argument :available, Boolean, required: false, description: "Restricts the response to products that are available for purchase."
     end
 
+    field :cart, CartType, null: true, description: "Returns a cart resource by identifier" do
+      argument :id, Integer, required: true, description: "The identifier of the cart."
+    end
+
+    field :carts, [CartType], null: false, description: "Returns all cart resources"
+
     def user(args)
       User.find_by(id: args[:id])
     end
@@ -49,6 +55,14 @@ module Types
       end
 
       Product.all
+    end
+
+    def carts
+      Cart.all
+    end
+
+    def cart(args)
+      Cart.find_by(id: args[:id])
     end
   end
 end
