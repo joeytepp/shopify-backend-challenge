@@ -1,12 +1,14 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 tobias:
+  id: 1
   first_name: Tobias
   last_name: Lütke
   email: tobi@shopify.com
-  password: password
+  password_digest: $2a$10$SBf9gucCWZgCEu63VId.YeUvXNEv4G67vACbHDDwR0sXa4VdCh9h2 # password
 lee:
+  id: 2
   first_name: Lee
   last_name: Byron
   email: lee@graphql.org
-  password: password
+  password_digest: $2a$10$SBf9gucCWZgCEu63VId.YeUvXNEv4G67vACbHDDwR0sXa4VdCh9h2 # password
